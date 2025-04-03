@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Card Interativo PICS</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #e8f5e9;
+      margin: 0;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      width: 320px;
+      background: #fff url('https://i.postimg.cc/4dPGwJpp/pnpic.png') no-repeat center center;
+      background-size: cover;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      overflow: hidden;
+      animation: fadeInUp 1s ease;
+      padding-bottom: 15px;
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, #4CAF50, #2E7D32);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      font-weight: bold;
+      font-size: 1.1em;
+    }
+
+    .card-content {
+      padding: 20px;
+      background: rgba(255,255,255,0.9);
+    }
+
+    .card-content h3 {
+      font-size: 1em;
+      margin-bottom: 10px;
+    }
+
+    .card-content ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .card-content li {
+      margin: 10px 0;
+    }
+
+    .card-content a {
+      text-decoration: none;
+      color: #2E7D32;
+      font-weight: bold;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer {
+      background: rgba(255,255,255,0.8);
+      text-align: center;
+      font-size: 0.85em;
+      color: #4CAF50;
+      padding: 10px 15px;
+      font-style: italic;
+    }
+
+    .progresso {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .barra-progresso {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 20px;
+      height: 10px;
+    }
+
+    .bloco {
+      flex: 1;
+      margin: 0 1px;
+      border-radius: 2px;
+      background-color: #f5c6cb;
+    }
+
+    .concluido {
+      background-color: #4CAF50 !important;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header">
+    Curso PICS e Autocuidado <br>
+    📘 40 h • 10 Semanas
+  </div>
+  <div class="card-content">
+    <h3>Explore os módulos:</h3>
+    <ul>
+      <li><a href="#">🏠 Início</a></li>
+      <li><a href="#">🎓 TeleAula</a></li>
+      <li><a href="#">🤖 Sala Interativa</a></li>
+      <li><a href="#">👥 VideoCast</a></li>
+      <li><a href="#">💬 Fórum</a></li>
+      <li><a href="#">📝 Atividades</a></li>
+      <li><a href="#">📗 Repositório</a></li>
+    </ul>
+    <div class="progresso">
+      <div id="progressoTotal">Progresso Total: 0%</div>
+      <div id="semanaAtual">Semana 1: ---</div>
+    </div>
+    <div class="barra-progresso" id="barraProgresso"></div>
+  </div>
+  <div class="footer">
+    Promovendo autocuidado e práticas integrativas no SUS
+  </div>
+</div>
+
+<script>
+  const tarefasPorSemana = {
+    "Semana 1: PICS e Autocuidado": ["tarefa1a", "tarefa1b", "tarefa1c", "tarefa1d", "tarefa1e", "tarefa1f"],
+    "Semana 2: Fitoterapia e Florais": ["tarefa2a", "tarefa2b", "tarefa2c", "tarefa2d", "tarefa2e", "tarefa2f"],
+    "Semana 3: Ayurveda e Yoga": ["tarefa3a", "tarefa3b", "tarefa3c", "tarefa3d", "tarefa3e", "tarefa3f"],
+    "Semana 4: Meditação e Arte": ["tarefa4a", "tarefa4b", "tarefa4c", "tarefa4d", "tarefa4e", "tarefa4f"],
+    "Semana 5: Biodança e Bioenergética": ["tarefa5a", "tarefa5b", "tarefa5c", "tarefa5d", "tarefa5e", "tarefa5f"],
+    "Semana 6: Constelação e Cromoterapia": ["tarefa6a", "tarefa6b", "tarefa6c", "tarefa6d", "tarefa6e", "tarefa6f"],
+    "Semana 7: Hipnoterapia e Geoterapia": ["tarefa7a", "tarefa7b", "tarefa7c", "tarefa7d", "tarefa7e", "tarefa7f"],
+    "Semana 8: Reiki e Reflexoterapia": ["tarefa8a", "tarefa8b", "tarefa8c", "tarefa8d", "tarefa8e", "tarefa8f"],
+    "Semana 9: MTC e Homeopatia": ["tarefa9a", "tarefa9b", "tarefa9c", "tarefa9d", "tarefa9e", "tarefa9f"],
+    "Semana 10: Apiterapia e Osteopatia": ["tarefa10a", "tarefa10b", "tarefa10c", "tarefa10d", "tarefa10e", "tarefa10f"]
+  };
+
+  let nomesSemanas = Object.keys(tarefasPorSemana);
+  let indexAtual = 0;
+
+  function atualizarCard() {
+    let totalConcluidas = 0;
+    let barra = document.getElementById("barraProgresso");
+    barra.innerHTML = "";
+
+    nomesSemanas.forEach((semana, i) => {
+      const tarefas = tarefasPorSemana[semana];
+      const concluidas = tarefas.filter(t => localStorage.getItem(t) === "concluida").length;
+      const bloco = document.createElement("div");
+      bloco.className = "bloco";
+      if (concluidas === tarefas.length) {
+        bloco.classList.add("concluido");
+        totalConcluidas++;
+      }
+      barra.appendChild(bloco);
+    });
+
+    const totalPorcentagem = Math.round((totalConcluidas / nomesSemanas.length) * 100);
+    document.getElementById("progressoTotal").innerText = Progresso Total: ${totalPorcentagem}%;
+  }
+
+  function rotacionarSemanas() {
+    const semana = nomesSemanas[indexAtual];
+    const tarefas = tarefasPorSemana[semana];
+    const concluidas = tarefas.filter(t => localStorage.getItem(t) === "concluida").length;
+    const percentual = Math.round((concluidas / tarefas.length) * 100);
+
+    document.getElementById("semanaAtual").innerText = ${semana}: ${percentual}%;
+
+    indexAtual = (indexAtual + 1) % nomesSemanas.length;
+  }
+
+  atualizarCard();
+  rotacionarSemanas();
+  setInterval(rotacionarSemanas, 3000);
+</script>
+
+</body>
+</html>
